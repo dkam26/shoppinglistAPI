@@ -46,7 +46,6 @@ class UserLogout(Resource):
         session.pop('pass')
         return jsonify({'message':'You are logout'})
 class getUserShoppinglists(Resource):
-   @auth.login_required
     def get(self):
         shoppinglist=Shoppinglists.query.filter_by(user_id=session['user']).all()
         output=[]
@@ -54,10 +53,9 @@ class getUserShoppinglists(Resource):
             output.append(p.shoppinglist_name)
         return jsonify({'lists':output})
 class getUserShoppinglist(Resource):
-    @auth.login_required
     def get(self,id):
-        Shoppinglist=Shoppinglists.query.filter_by(id=id).first()
-        slist=Product.query.filter_by(shoppinglist_id=Shoppinglist).all()
+        Shoppinglist=Shoppinglists.query.filter_by(shoppinglist_name=id).first()
+        slist=Product.query.filter_by(shoppinglist_id=Shoppinglist.shoppinglist_name).all()
         output=[]
         for s in slist:
             produit={}
@@ -65,19 +63,19 @@ class getUserShoppinglist(Resource):
             produit['Amountspent']=s.AmountSpent
             produit['Quantity']=s.Quantity
             output.append(produit)
-        return jsonify({'list':output})
+        return jsonify({id:output})
 class updateUserShoppinglist(Resource):
-    @auth.login_required
     def put(self,id):
-        Shoppinglist=Shoppinglists.query.filter_by(id=id).first()
+        Shoppinglist=Shoppinglists.query.filter_by(shoppinglist_name=id).first()
         newName=request.json['newName']
+        
         Shoppinglist.shoppinglist_name=newName
         db.session.add(Shoppinglist)
+        
         db.session.commit()
         return jsonify({"Message":"The list name has been changed"})
 
 class postUserShoppinglist(Resource):
-    @auth.login_required
     def post(self):
         user_id=session['user']
         shoppinglist_name=request.json['newlist']
@@ -87,40 +85,33 @@ class postUserShoppinglist(Resource):
         return jsonify({shoppinglist_name:'created'})
 
 class deleteUserShoppinglist(Resource):
-    @auth.login_required
     def delete(self,id):
-        Shoppinglist=Shoppinglists.query.filter_by(id=id).first()
+        Shoppinglist=Shoppinglists.query.filter_by(shoppinglist_name=id).first()
         db.session.delete(Shoppinglist)
         db.session.commit()
         return jsonify({"Message":"The list name has been deleted"})
 class AddProduct(Resource):
-    @auth.login_required
     def post(self,id):
-        Shoppinglist=Shoppinglists.query.filter_by(id=id).first()
-        SL=Shoppinglist.shoppinglist_id
+        shoppinglist_id=id
         p=request.json['product']
         Q=request.json['Quantity']
         A=request.json['Amountspent']
-        Prod=Product(p,Q,A,SL)
+        Prod=Product(p,Q,A,shoppinglist_id)
         db.session.add(Prod)
         db.session.commit()
         return jsonify({'message':'The product has been added'})
     
 class UpdateShoppinglist(Resource):
-    @auth.login_required
     def put(self,id,item_id):
         Quantity=request.json['Quantity']
         AmountSpent=request.json['AmountSpent']
-        Shoppinglist=Shoppinglists.query.filter_by(id=id).first()
-        for s in Shoppinglist:
-            if s.id is item_id:
-                s.Quantity=Quantity
-                s.AmountSpent=AmountSpent
-        db.session.add(s)
+        UpdateItem=Product.query.filter_by(product=item_id).first()
+        UpdateItem.Quantity=Quantity
+        UpdateItem.AmountSpent=AmountSpent
+        db.session.add(UpdateItem)
         db.session.commit()
         return jsonify({'message':'The product has been updated'})
 class DeleteItem(Resource):
-    @auth.login_required
     def delete(self,id,item_id):
         Shoppinglist=Shoppinglists.query.filter_by(id=id).first()
         for s in Shoppinglist:
@@ -129,7 +120,6 @@ class DeleteItem(Resource):
                 db.session.commit()
         return jsonify({'message':'The product has been deleted'})
 class RestPassword(Resource):
-    @auth.login_required
     def put(self):
         username=request.json['Username']
         passw=request.json['pass']
@@ -140,15 +130,15 @@ class RestPassword(Resource):
         db.session.add(user)
         db.session.commit()
         return jsonify({'message':'The password is reset'})
-api.add_resource(deleteUserShoppinglist,'/shoppinglists/<int:id>',methods=['DELETE'])
-api.add_resource(updateUserShoppinglist,'/shoppinglists/<int:id>',methods=['PUT'])
-api.add_resource(getUserShoppinglist,'/shoppinglists/<int:id>',methods=['GET'])
+api.add_resource(deleteUserShoppinglist,'/shoppinglists/<id>',methods=['DELETE'])
+api.add_resource(updateUserShoppinglist,'/shoppinglists/<id>',methods=['PUT'])
+api.add_resource(getUserShoppinglist,'/shoppinglists/<id>',methods=['GET'])
 api.add_resource(postUserShoppinglist,'/shoppinglists/',methods=['POST'])
 api.add_resource(getUserShoppinglists,'/shoppinglists/',methods=['GET'])
 api.add_resource(RestPassword,'/auth/RestPassword/',methods=['PUT'])
-api.add_resource(DeleteItem,'/shoppinglist/<int:id>/items/<int:item_id>',methods=['DELETE'])
-api.add_resource(UpdateShoppinglist,'/shoppinglist/<int:id>/items/<int:item_id>',methods=['PUT'])
-api.add_resource(AddProduct,'/shoppinglist/<int:id>/items/',methods=['POST'])
+api.add_resource(DeleteItem,'/shoppinglist/<id>/items/<int:item_id>',methods=['DELETE'])
+api.add_resource(UpdateShoppinglist,'/shoppinglist/<id>/items/<item_id>',methods=['PUT'])
+api.add_resource(AddProduct,'/shoppinglist/<id>/items/',methods=['POST'])
 api.add_resource(UserLogout,'/auth/logout/')
 api.add_resource(UserLogin,'/auth/login/',methods=['POST'])        
 api.add_resource(AddNewUser,'/auth/register/',methods=['POST'])

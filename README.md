@@ -1,5 +1,5 @@
 
-# shoppinglistAPI
+# ShoppinglistAPI
 =======
 # ShoppingList
 Shoppinglist is an app helps users keep track of their purchased goods.Users can add goods bought,update them or even delete them.

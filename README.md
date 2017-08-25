@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # shoppinglistAPI
 =======
 # ShoppingList
@@ -21,23 +21,13 @@ TODO
 
 The need for the continous tracking of one's expenditure on consumables
 
-## Installation
-
-TODO.
-
-## API Reference
-
-TODO
-
 ## Tests
 
-The tests are to confirm the functionality of the front-end pages
+The tests are to confirm the connection to the database,login sess
 
 ## Contributors
 
-@gkam26 
+https//github.com/dkam26
 
-## License
 
-TODO
->>>>>>> API
+

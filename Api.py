@@ -1,11 +1,28 @@
-from flask import Flask,request,jsonify,session
+from flask import Flask,request,jsonify,session,make_response
 from flask_restful import Resource,Api
-from my_app.models import User,Product,Shoppinglists
-from my_app import db,app
-from flask_httpauth import HTTPBasicAuth
-auth=HTTPBasicAuth()
+from my_app.models.models import User,Product,Shoppinglists,Store
+from my_app import db,app,manager
+from werkzeug.security import generate_password_hash,check_password_hash
+import jwt
+from functools import wraps
+import datetime 
 
-api=Api(app)
+api=Api(app,catch_all_404s=True)
+def token_required(f):
+    @wraps(f)
+    def decorated(*args,**kwargs):
+        token=None
+        if 'x-access-token' in request.headers:
+            token=request.headers['x-access-token']
+        if not token:
+            return jsonify({'message':'Token is missing !'}),401
+        try:
+            data=jwt.decode(token,app.config['SECRET_KEY'])
+            current_user=User.query.filter_by(id=data['id']).first()
+        except:
+            return jsonify({'message':'Token is invalid !'}),401
+        return f(current_user,*args,**kwargs) 
+    return decorated
 
 class AddNewUser(Resource):
     def post(self):
@@ -14,48 +31,74 @@ class AddNewUser(Resource):
         Email=request.json['Email']
         Firstname=request.json['Firstname']
         Password=request.json['Password']
+        hashed_password=generate_password_hash(Password,method='pbkdf2:sha256')
         NewUser=User(user,Surname,Firstname,Email,Password)
-        db.session.add(NewUser)
+        db.session.add(User(user,Surname,Firstname,Email,Password))
         db.session.commit()
         return jsonify({'message':'User created'})
 class UserLogin(Resource):
 
 
     def post(self):
-        userName=request.json['user']
-        UserPass=request.json['Password']
-        users=User.query.filter_by(user=userName).first()
-        if users:
-            if UserPass == users.Password:
-                session['user']=users.user
-                session['pass']=users.Password
-                shoppinglist=Shoppinglists.query.filter_by(user_id=users.user).all()
-                output=[]
-                for p in shoppinglist:
-                    output.append(p.shoppinglist_name)
-                return jsonify({'lists':output})
-            else:
-               
-                return jsonify({'message':'Wrong password'})
-        else:
-            
-            return jsonify({'message':'Not a user'})
+        user=request.json['user']
+        Password=request.json['Password']
+        Users=User.query.filter_by(user=user,Password=Password).first()
+        if Users:
+            session['users']=Users.user
+            session['Password']=Users.Password
+            token=jwt.encode({'id':Users.id,'exp':datetime.datetime.utcnow()+datetime.timedelta(minutes=60)},app.config['SECRET_KEY'])
+            return jsonify({'Welcome':session['users'],'token':token.decode('UTF-8')})
+        return jsonify({'message':'Wrong creditinals'})
+class searchlist(Resource):
+    @token_required
+    def get(self,current_user,name):
+        shoppinglist=Shoppinglists.query.filter_by(shoppinglist_name=name).first()
+        shoplist=[]
+        if shoppinglist:
+            p=Product.query.filter_by(shoppinglist_id=shoppinglist.shoppinglist_name).all()
+            for i in p:
+                produit={}
+                produit['Product']=i.product
+                produit['Amountspent']=i.AmountSpent
+                produit['Quantity']=i.Quantity
+                shoplist.append(produit)
+           
+    
+        return jsonify({'existing products of searched list':shoplist})
+class searchProduct(Resource):
+    @token_required
+    def get(self,current_user,name):
+        produit=Product.query.filter_by(product=name).first()
+        if produit:
+            item={}
+            item['Product']=produit.product
+            item['Amountspent']=produit.AmountSpent
+            item['Quantity']=produit.Quantity
+            item['shoppinglist_name']=produit.shoppinglist_id
+        return jsonify({'Searched product':item})
+
+
 class UserLogout(Resource):
-    def post(self):
-        session.pop('user')
-        session.pop('pass')
+    @token_required
+    def post(self,current_user):
+        session.pop('users')
+        session.pop('Password')
         return jsonify({'message':'You are logout'})
+
 class getUserShoppinglists(Resource):
-    def get(self):
-        shoppinglist=Shoppinglists.query.filter_by(user_id=session['user']).all()
+    @token_required
+    def get(self,current_user,number):
+        user=session.get('users')
+        shoppinglist=Shoppinglists.query.filter_by(user_id=user).paginate(1,number).items
         output=[]
         for p in shoppinglist:
             output.append(p.shoppinglist_name)
         return jsonify({'lists':output})
 class getUserShoppinglist(Resource):
-    def get(self,id):
+    @token_required
+    def get(self,current_user,id,number):
         Shoppinglist=Shoppinglists.query.filter_by(shoppinglist_name=id).first()
-        slist=Product.query.filter_by(shoppinglist_id=Shoppinglist.shoppinglist_name).all()
+        slist=Product.query.filter_by(shoppinglist_id=Shoppinglist.shoppinglist_name).paginate(1,number).items
         output=[]
         for s in slist:
             produit={}
@@ -63,84 +106,95 @@ class getUserShoppinglist(Resource):
             produit['Amountspent']=s.AmountSpent
             produit['Quantity']=s.Quantity
             output.append(produit)
-        return jsonify({id:output})
+        return jsonify({'Products':output})
 class updateUserShoppinglist(Resource):
-    def put(self,id):
+    @token_required
+    def put(self,current_user,id):
         Shoppinglist=Shoppinglists.query.filter_by(shoppinglist_name=id).first()
         newName=request.json['newName']
-        
         Shoppinglist.shoppinglist_name=newName
-        db.session.add(Shoppinglist)
-        
-        db.session.commit()
+        store=Store()
+        store.register(Shoppinglist)
         return jsonify({"Message":"The list name has been changed"})
 
 class postUserShoppinglist(Resource):
-    def post(self):
-        user_id=session['user']
+    @token_required
+    def post(self,current_user):
         shoppinglist_name=request.json['newlist']
+        user_id=session.get('users')
         newShoppinglist=Shoppinglists(user_id,shoppinglist_name)
-        db.session.add(newShoppinglist)
-        db.session.commit()
+        store=Store()
+        store.register(newShoppinglist)
         return jsonify({shoppinglist_name:'created'})
 
 class deleteUserShoppinglist(Resource):
-    def delete(self,id):
+    @token_required
+    def delete(self,current_user,id):
         Shoppinglist=Shoppinglists.query.filter_by(shoppinglist_name=id).first()
-        db.session.delete(Shoppinglist)
-        db.session.commit()
+        products=Product.query.filter_by(shoppinglist_id=id).first()
+        store=Store()
+        store.edit(Shoppinglist)
+        store.edit(products)
         return jsonify({"Message":"The list name has been deleted"})
 class AddProduct(Resource):
-    def post(self,id):
+    @token_required
+    def post(self,current_user,id):
         shoppinglist_id=id
         p=request.json['product']
         Q=request.json['Quantity']
         A=request.json['Amountspent']
         Prod=Product(p,Q,A,shoppinglist_id)
-        db.session.add(Prod)
-        db.session.commit()
+        store=Store()
+        store.register(Prod)
         return jsonify({'message':'The product has been added'})
     
 class UpdateShoppinglist(Resource):
-    def put(self,id,item_id):
+    @token_required
+    def put(self,current_user,item_id):
         Quantity=request.json['Quantity']
         AmountSpent=request.json['AmountSpent']
         UpdateItem=Product.query.filter_by(product=item_id).first()
         UpdateItem.Quantity=Quantity
         UpdateItem.AmountSpent=AmountSpent
-        db.session.add(UpdateItem)
-        db.session.commit()
+        store=Store()
+        store.register(UpdateItem)
+        
         return jsonify({'message':'The product has been updated'})
 class DeleteItem(Resource):
-    def delete(self,id,item_id):
-        Shoppinglist=Shoppinglists.query.filter_by(id=id).first()
-        for s in Shoppinglist:
-            if s.id is item_id:
-                db.session.delete(s)
-                db.session.commit()
+    @token_required
+    def delete(self,current_user,item_id):
+        ItemToDelete=Product.query.filter_by(product=item_id).first()
+        store=Store()
+        store.edit(ItemToDelete)
         return jsonify({'message':'The product has been deleted'})
 class RestPassword(Resource):
-    def put(self):
+    @token_required
+    def put(self,current_user):
+        newpass=request.json['Newpassword']
         username=request.json['Username']
         passw=request.json['pass']
         user=User.query.filter_by(user=username).first()
-        newpass=request.json['Newpassword']
         user.Password=newpass
         user.user=username
-        db.session.add(user)
-        db.session.commit()
+        store=Store()
+        store.edit(user)
+        
         return jsonify({'message':'The password is reset'})
 api.add_resource(deleteUserShoppinglist,'/shoppinglists/<id>',methods=['DELETE'])
 api.add_resource(updateUserShoppinglist,'/shoppinglists/<id>',methods=['PUT'])
-api.add_resource(getUserShoppinglist,'/shoppinglists/<id>',methods=['GET'])
+api.add_resource(getUserShoppinglist,'/shoppinglist/<id>/<int:number>',methods=['GET'])
 api.add_resource(postUserShoppinglist,'/shoppinglists/',methods=['POST'])
-api.add_resource(getUserShoppinglists,'/shoppinglists/',methods=['GET'])
+api.add_resource(getUserShoppinglists,'/shoppinglists/<int:number>',methods=['GET'])
 api.add_resource(RestPassword,'/auth/RestPassword/',methods=['PUT'])
 api.add_resource(DeleteItem,'/shoppinglist/<id>/items/<int:item_id>',methods=['DELETE'])
 api.add_resource(UpdateShoppinglist,'/shoppinglist/<id>/items/<item_id>',methods=['PUT'])
-api.add_resource(AddProduct,'/shoppinglist/<id>/items/',methods=['POST'])
+api.add_resource(AddProduct,'/shoppinglist/<string:id>/items/',methods=['POST'])
+api.add_resource(searchlist,'/searchlist/<string:name>',methods=['GET'])
+api.add_resource(searchProduct,'/searchProduct/<string:name>',methods=['GET'])
 api.add_resource(UserLogout,'/auth/logout/')
 api.add_resource(UserLogin,'/auth/login/',methods=['POST'])        
 api.add_resource(AddNewUser,'/auth/register/',methods=['POST'])
-if __name__ == '__main__':
-    app.run(debug=True)
+
+if __name__=="__main__":
+    manager.run()
+

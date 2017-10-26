@@ -22,7 +22,7 @@ The need for the continous tracking of one's expenditure on consumables
 
 ## Tests
 
-The tests are to confirm the connection to the database,login sess
+The tests are to confirm the connection to the database,accounts creation,login session
 
 ## Contributors
 

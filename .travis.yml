@@ -1,8 +1,13 @@
 language: python
-
-python: "3.6"
-postgre: "9.4"
+python: 
+  - "3.6.3"
+services:
+  - postgresql
+before_script:
+  - psql -c 'craete database shhoppinglist;' -U deo
+#To install dependences
 install:
-   -pip install -r requirements.txt
-   
-script: python Tests.py
+  - pip install -r requirements.txt
+#To run tests  
+script: 
+  - nosetests --with-coverage --cover-package=my_app test_list.py

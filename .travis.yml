@@ -1,8 +1,10 @@
 language: python
 
-python: "3.6"
+python: "3.6.3"
 postgre: "9.4"
+#To install dependences
 install:
    -pip install -r requirements.txt
-   
-script: python Tests.py
+#To run tests  
+script: 
+    -nosetests --with-coverage --cover-package=my_app test_list.py

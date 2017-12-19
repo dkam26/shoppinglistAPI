@@ -9,3 +9,4 @@ app.config['SECRET_KEY']='Random key'
 db=SQLAlchemy(app)
 api = Api(app)
 from my_app import views
+db.create_all()

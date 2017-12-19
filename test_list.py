@@ -1,15 +1,14 @@
 import os
 from my_app import app,db
-from my_app.models import User,Product,Store
-from flask import Flask,request,jsonify,session
+from my_app.models import User,Product
+from flask import Flask,request,jsonify,session,json
 from flask_restful import Resource,Api
 import unittest as unittest
 from my_app.views import api,AddNewUser,PostUserShoppinglist
 import jwt
 from functools import wraps
 import datetime 
-import json
-store=Store()
+
 class ShoppingListApiTest(unittest.TestCase): 
     def setUp(self):
         self.app=app
@@ -38,11 +37,11 @@ class ShoppingListApiTest(unittest.TestCase):
         self.assertEqual(self.rsu.status_code,200)
         self.assertIn("dkam6",str(self.rsu.data))
     def test_if_app_gets_shoppinglists(self):
-        li=self.client.get('/shoppinglists/1',headers={'Content-Type':'application/json','x-access-token':self.tok})
+        li=self.client.get('/shoppinglists/?each_page=1&page_number=1',headers={'Content-Type':'application/json','x-access-token':self.tok})
         self.assertEqual(li.status_code,200)
     def test_if_app_can_search_for_lists(self):
-        searchforlists=self.client.get('/searchlist/trousers',headers={'Content-Type':'application/json','x-access-token':self.tok})
-        searchforproducts=self.client.get('/searchProduct/khaki',headers={'Content-Type':'application/json','x-access-token':self.tok})
+        searchforlists=self.client.get('/search/?q=shirts',headers={'Content-Type':'application/json','x-access-token':self.tok})
+        searchforproducts=self.client.get('/searchProduct/?q=polo',headers={'Content-Type':'application/json','x-access-token':self.tok})
         self.assertIn("existing products of searched list",str(searchforlists.data))   
         self.assertIn("Searched product",str(searchforproducts.data)) 
         self.assertEqual(searchforproducts.status_code,200)
@@ -53,7 +52,7 @@ class ShoppingListApiTest(unittest.TestCase):
         self.assertEqual(logout.status_code,200)
        
     def test_app_returns_shoppinglist_items(self):
-        list_of_items=self.client.get('/shoppinglist/trousers/1',headers={'Content-Type':'application/json','x-access-token':self.tok})
+        list_of_items=self.client.get('/shoppinglist/trousers/?each_page=1&page_number=1',headers={'Content-Type':'application/json','x-access-token':self.tok})
         self.assertIn("Products",str(list_of_items.data)) 
         self.assertEqual(list_of_items.status_code,200)
     def test_app_can_update_a_list(self):
@@ -64,9 +63,6 @@ class ShoppingListApiTest(unittest.TestCase):
     def test_app_can_add_list(self):
         add_list=self.client.post('/shoppinglists/', data=self.shopllist, headers={'Content-Type':'application/json','x-access-token':self.tok})
         self.assertEqual(add_list.status_code,200)
-    def test_app_can_search_a_product(self):
-        search_product=self.client.get('/searchProduct/nikes',headers={'Content-Type':'application/json','x-access-token':self.tok})
-        self.assertEqual(search_product.status_code,200)
     def test_app_can_delete_list(self):
         delete_list=self.client.delete('/shoppinglists/nikes',headers={'Content-Type':'application/json','x-access-token':self.tok})
         self.assertEqual(delete_list.status_code,200)

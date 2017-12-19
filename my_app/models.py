@@ -3,6 +3,7 @@ import datetime
 from my_app import db
 
 class User(db.Model):
+    """Table for users"""
     __tablename__ = "User"
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(255), unique=True)
@@ -18,7 +19,9 @@ class User(db.Model):
         self.Password=Password
     def __repr__(self):
         return '<User %d>'% self.id
+
 class Shoppinglists(db.Model):
+    """Table for shoppinglists created by users"""
     __tablename__="Shoppinglists"
     id= db.Column(db.Integer,primary_key=True)
     user_id=db.Column(db.Integer,db.ForeignKey("User.id"))
@@ -37,7 +40,9 @@ class Shoppinglists(db.Model):
         db.session.commit()
     def __repr__(self):
         return '<Shoppinglists %d>'% self.id
+
 class Product(db.Model):
+    """Table for products under shoppinglists created by users"""
     __tablename__ = "Product"
     id = db.Column(db.Integer,primary_key=True)
     shoppinglist_id=db.Column(db.Integer,db.ForeignKey("Shoppinglists.id"))

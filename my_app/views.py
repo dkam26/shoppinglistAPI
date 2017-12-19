@@ -7,6 +7,7 @@ import jwt, datetime
 from my_app.models import User, Product, Shoppinglists
 from my_app import db, app
 api = Api(app)
+
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -23,7 +24,6 @@ def token_required(f):
         return f(current_user, *args, **kwargs)
     return decorated
 
-
 class AddNewUser(Resource):
     """API to add user"""
     def post(self):
@@ -38,17 +38,21 @@ class AddNewUser(Resource):
             if not user or not surname or not email or not firstname or not password:
                 return jsonify({"message":"Missing information about the user"})
             else:
-                existing_user = User.query.filter_by(username=user).first()
-                existing_email = User.query.filter_by(email=email).first()
-                if existing_email is None and existing_user is None:
-                    #New user to be registered
-                    newUser=User(user.lower(), surname.lower(), firstname.lower(),email, password)
-                    db.session.add(newUser)
-                    db.session.commit()
-                    return jsonify({'message':'User created'})
+                if type(surname) is int or type(firstname) is int:
+                    return jsonify({'message':'firstname or surname cant be numbers '})
                 else:
-                    return jsonify({'message':"User exists"})
+                    existing_user = User.query.filter_by(username=user).first()
+                    existing_email = User.query.filter_by(email=email).first()
+                    if existing_email is None and existing_user is None:
+                        #New user to be registered
+                        newUser=User(user.lower(), surname.lower(), firstname.lower(),email, password)
+                        db.session.add(newUser)
+                        db.session.commit()
+                        return jsonify({'message':'User created'})
+                    else:
+                        return jsonify({'message':"User exists"})
         return jsonify({'message':"Invalid email"})
+
 class UserLogin(Resource):
     """User to login"""
     def post(self):
@@ -69,8 +73,9 @@ class UserLogin(Resource):
                 }, app.config['SECRET_KEY'])
                 return jsonify({'Welcome':session['loggedUser'] , 'token':token.decode('UTF-8')})
             return jsonify({'message':'Wrong creditinals'})
+
 class Search(Resource):
-    """User to search for a shoppinglist or product"""
+    """User to search for a shoppinglist"""
     @token_required
     def get(self, current_user):
         searchedlist=request.args.get("q") 
@@ -84,7 +89,12 @@ class Search(Resource):
                 produit['Amountspent'] = i.AmountSpent
                 produit['Quantity'] = i.Quantity
                 shoplist.append(produit)
-        return jsonify({'existing products of searched list':shoplist})
+        if len(shoplist)==0:
+            return jsonify({'message':"Shoppinglist doesnt exist"})
+        else:
+            return jsonify({'existing products of searched list':shoplist})
+
+        
 class SearchProduct(Resource):
     """User to search for a product"""
     @token_required
@@ -97,7 +107,11 @@ class SearchProduct(Resource):
             item['Amountspent'] = produit.AmountSpent
             item['Quantity'] = produit.Quantity
             item['shoppinglist_name'] = produit.shoppinglist_id
-        return jsonify({'Searched product':item})
+        if len(item) ==0:
+            return jsonify({'Message':"Product doesnt exist"})
+        else:
+            return jsonify({'Searched product':item})
+        
 class UserLogout(Resource):
     """User to logout"""
     @token_required
@@ -120,6 +134,7 @@ class GetUserShoppinglists(Resource):
         for p in shoppinglist:
             output.append(p.shoppinglist_name)
         return jsonify({'lists':output})
+
 class GetUserShoppinglist(Resource):
     """API to return a given shoppinglist """
     @token_required
@@ -137,7 +152,13 @@ class GetUserShoppinglist(Resource):
                     produit['Amountspent'] = s.AmountSpent
                     produit['Quantity'] = s.Quantity
                     output.append(produit)
-        return jsonify({'Products':output})
+        if len(output)==0:
+            return jsonify({'Message':"Shoppinglist is empty"})
+        else:
+            return jsonify({'Products':output})
+
+        
+
 class UpdateUserShoppinglist(Resource):
     """API to rename a given shoppinglist"""
     @token_required
@@ -193,6 +214,7 @@ class DeleteUserShoppinglist(Resource):
             Shoppinglist.edit(Shoppinglist)
             return jsonify({"Message":"The list name has been deleted"})
         return jsonify({"Message":"The list doesnt"})
+
 class AddProduct(Resource):
     """User to add product to shoppinglist"""
     @token_required
@@ -213,6 +235,7 @@ class AddProduct(Resource):
                 return jsonify({'message':'The product has been added'})
         else:
             return jsonify({'message':'Incomplete information'})
+
 class UpdateShoppinglist(Resource):
     """User to update shoppinglist product"""
     @token_required
@@ -227,6 +250,7 @@ class UpdateShoppinglist(Resource):
             UpdateItem.register(UpdateItem)
             return jsonify({'message':'The product has been updated'})
         return jsonify({'message':'The product doesnt exist'})
+
 class DeleteItem(Resource):
     """User to add item from the shoppinglist"""
     @token_required
@@ -236,6 +260,7 @@ class DeleteItem(Resource):
             ItemToDelete.edit(ItemToDelete)
             return jsonify({'message':'The product has been deleted'})
         return jsonify({'message':'The product doesnt exist'})
+
 class RestPassword(Resource):
     """User to reset password"""
     @token_required
@@ -254,6 +279,7 @@ class RestPassword(Resource):
             return jsonify({'message':'Not a valid user'})
         else:
             return jsonify({'message':'Incomplete informarion'})
+
 api.add_resource(DeleteUserShoppinglist, '/shoppinglists/<string:id>', methods=['DELETE'])
 api.add_resource(UpdateUserShoppinglist, '/shoppinglists/<string:id>', methods=['PUT'])
 api.add_resource(GetUserShoppinglist, '/shoppinglist/<id>/', methods=['GET'])

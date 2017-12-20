@@ -12,7 +12,7 @@ install:
   - pip install -r requirements.txt
   
 before_script:
-  - psql -c 'create database shoppinglist;' -U deo
+  - psql -c 'create database shoppinglist;' -U postgres
 
 #To run tests  
 script: 

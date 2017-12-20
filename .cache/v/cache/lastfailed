@@ -1,4 +1,0 @@
-{
-  "my_app/Lib/site-packages/wheel/test/test_basic.py::test_pydist": true,
-  "my_app/Lib/site-packages/wheel/test/test_tool.py::test_keygen": true
-}

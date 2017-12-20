@@ -1,4 +1,6 @@
-.cache
+.cache/
 .vscode
 migrations/
+__pycache__/
+
 

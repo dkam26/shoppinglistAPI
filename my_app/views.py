@@ -79,7 +79,7 @@ class Search(Resource):
     @token_required
     def get(self, current_user):
         searchedlist=request.args.get("q") 
-        shoppinglist = Shoppinglists.query.filter_by(shoppinglist_name=searchedlist.lower()).first()
+        shoppinglist = Shoppinglists.query.filter(Shoppinglists.shoppinglist_name.like('%'+searchedlist+'%')).first()
         shoplist = []
         if shoppinglist:
             p = Product.query.filter_by(shoppinglist=shoppinglist.shoppinglist_name).all()
@@ -89,18 +89,19 @@ class Search(Resource):
                 produit['Amountspent'] = i.AmountSpent
                 produit['Quantity'] = i.Quantity
                 shoplist.append(produit)
-        if len(shoplist)==0:
-            return jsonify({'message':"Shoppinglist doesnt exist"})
+            if len(shoplist)==0:
+                return jsonify({'message':shoppinglist.shoppinglist_name+" Shoppinglist still empty"})
+            else:
+                return jsonify({'existing products of searched list':shoplist})
         else:
-            return jsonify({'existing products of searched list':shoplist})
+            return jsonify({'Message':'No list found'})
 
-        
 class SearchProduct(Resource):
     """User to search for a product"""
     @token_required
     def get(self, current_user):
         searchedProduct=request.args.get("q") 
-        produit = Product.query.filter_by(product=searchedProduct.lower()).first()
+        produit = Product.query.filter(Product.product.like('%'+searchedProduct.lower()+'%')).first()
         item = {}
         if produit:
             item['Product'] = produit.product
@@ -156,8 +157,6 @@ class GetUserShoppinglist(Resource):
             return jsonify({'Message':"Shoppinglist is empty"})
         else:
             return jsonify({'Products':output})
-
-        
 
 class UpdateUserShoppinglist(Resource):
     """API to rename a given shoppinglist"""

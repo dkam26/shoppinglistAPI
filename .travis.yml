@@ -10,4 +10,4 @@ install:
   - pip install -r requirements.txt
 #To run tests  
 script: 
-  - nosetests --with-coverage --cover-package=my_app test_list.py
+  - nosetests --with-coverage --cover-package=my_app tests/

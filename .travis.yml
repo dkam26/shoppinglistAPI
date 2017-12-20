@@ -4,7 +4,7 @@ python:
 services:
   - postgresql
 before_script:
-  - psql -c 'create database shhoppinglist;' -U deo
+  - psql -c 'create database shoppinglist;' -U postgres
 #To install dependences
 install:
   - pip install -r requirements.txt

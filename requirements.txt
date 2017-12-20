@@ -42,3 +42,4 @@ wrapt==1.10.10
 WTForms==2.1
 flask_restful
 psycopg2
+validate_email

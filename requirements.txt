@@ -41,3 +41,4 @@ Whoosh==2.7.4
 wrapt==1.10.10
 WTForms==2.1
 flask_restful
+psycopg2

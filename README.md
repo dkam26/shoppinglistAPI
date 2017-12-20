@@ -1,5 +1,7 @@
 
 # ShoppinglistAPI
+[![Build Status](https://travis-ci.org/dkam26/shoppinglistAPI.png)](https://travis-ci.org/dkam26/shoppinglistAPI)
+
 =======
 # ShoppingList
 Shoppinglist is an app helps users keep track of their purchased goods.Users can add goods bought,update them or even delete them.

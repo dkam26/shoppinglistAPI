@@ -10,7 +10,7 @@ services:
 #To install dependences
 install:
   - pip install -r requirements.txt
-  
+
 before_script:
   - psql -c 'create database shoppinglist;' -U postgres
 

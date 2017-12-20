@@ -17,3 +17,6 @@ before_script:
 #To run tests  
 script: 
   - nosetests --with-coverage --cover-package=my_app tests/
+
+after_success:
+  - coveralls

@@ -1,13 +1,19 @@
 language: python
-python: 
-  - "3.6.3"
+python:
+  - "3.6"
+branches:
+    only:
+        - develop
 services:
   - postgresql
-before_script:
-  - psql -c 'craete database shhoppinglist;' -U deo
+
 #To install dependences
 install:
   - pip install -r requirements.txt
+  
+before_script:
+  - psql -c 'create database shoppinglist;' -U postgres
+
 #To run tests  
 script: 
-  - nosetests --with-coverage --cover-package=my_app test_list.py
+  - nosetests --with-coverage --cover-package=my_app tests/

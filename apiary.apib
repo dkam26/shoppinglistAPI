@@ -1,0 +1,345 @@
+FORMAT: 1A
+HOST: http://polls.apiblueprint.org/
+
+# ShoppingListAPI
+
+ShoppingListAPI is a simple API allowing users to create, read, update and delete
+shoppinglists
+
+## Register [/auth/register]
+
+
+### Register a new user [POST]
+
+You may register a new user using this action. It takes a JSON
+object containing a name, email and password
+
++ Request (application/json)
+
+        {
+            "user": "dkam11",
+            "Email": "dkam11@gmail.com",
+            "Password": "secret",
+            "Firstname": "deo",
+            "Surname": "kamara",
+            
+        }
+
++ Response 201 (application/json)
+
+    + Headers
+
+            Location: /auth/register
+
+    + Body
+
+            {
+                "Status": "Johndoe@gmail.com Successfully registered",
+                "id": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1MDIwNzA2MTEsImlhdCI6MTUwMjA2NzAxMSwic3ViIjo0fQ.QwmwUemah0Hl7C5EXBPS36qFlNV5-iN8pJx78jimdrI"
+            }
+            
+## Login [/auth/login]            
+
+### Login a user [POST]
+
+You may login a user using this action. It takes a JSON
+object containing an email and password
+
++ Request (application/json)
+
+        {
+            "user": "dkam11",
+            "Password": "secret"
+            
+        }
+
++ Response 201 (application/json)
+
+    + Headers
+
+            Location: /auth/login
+
+    + Body
+
+            {
+                "Welcome": "dkam11",
+                "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNTEzNzgzMzQzfQ.A4Bfos-f6-Nm9fLmd6etANFR-i1wdbtaX6UQIhtiBaM"
+            }
+            
+            
+## Logout [/auth/logout/]            
+
+### Logout a user [POST]
+
+You may logout a user using this action. 
+
++ Request (application/json)
+     + Headers
+     
+            x-access-token: Token
+        
+
++ Response 201 (application/json)
+
+    + Headers
+
+            Location: /logout/
+
+## Rest password [/auth/RestPassword/]            
+
+### Logout a user [POST]
+
+You may rest a user's password using this action. 
+
++ Request (application/json)
+     + Headers
+     
+            x-access-token: Token
+    + Body
+    
+            {
+                "Newpassword": "Secret1",
+                "Username": "dkam11",
+                "pass":"secret"
+                    
+            }
+
++ Response 201 (application/json)
+
+    + Headers
+
+            Location: /RestPassword/
+    + Body
+            
+            {
+            'message':"Password has been reset"
+            }
+
+
+## Add Shoppinglists [/shoppinglists/]            
+
+### Add a shoppinglist [POST]
+
+You add a shoppinglist using this action. It takes a JSON
+object containing the name of the shoppinglist and description and
+Authenication token in header
+
++ Request (application/json)
+
+    + Headers
+
+            x-access-token: Token
+    + Body
+
+            {
+                "newlist": "Shoes"
+                
+            }
+
++ Response 201 (application/json)
+
+    + Headers
+
+            Location: /shoppinglists/
+
+    + Body
+
+            {
+                'Shoes': 'created'
+            
+            }
+
+
+### Retrieve shoppinglists [GET/shoppinglists/]
+
+You can retrieve shoppinglists using this action. 
+Request contains Authenication token in header
+
+    + Headers
+
+            x-access-token: Token
+
++ Response 201 (application/json)
+
+    + Headers
+
+            Location: /shoppinglists/?each_page=1&page_number=1
+
+    + Body
+
+            {
+                "lists":[
+                            "Shoes"
+                        ]
+            }
+
+
+
+### Retrieve a single shoppinglists [GET/shoppinglist/]
+
+You retrieve a single shoppinglist using this action. 
+Request contains Authenication token in header
+
+    + Headers
+
+            x-access-token: Token
+
++ Response 201 (application/json)
+
+    + Headers
+
+            Location: /shoppinglist/trousers?each_page=1&page_number=1
+
+    + Body
+
+            {
+                "Products": [
+                             {
+                                "Amountspent": 400,
+                                "Product": "nike",
+                                "Quantity": 5
+                                }
+                            ]
+            }
+
+### Update a shoppinglist [PUT]
+
+You update a shoppinglist using this action. 
+Request contains Authenication token in header
+
++ Request (application/json)
+
+    + Headers
+
+            x-access-token: Token
+        
+    + Body
+
+            {
+                "newName": "Trousers",
+               
+            }
+
+
++ Response 201 (application/json)
+
+    + Headers
+
+            Location: /shoppinglists/id
+
+    + Body
+
+            {
+                'message':'The product has been updated'
+            }
+
+### Delete a shoppinglist [DELETE]
+
+You delete a shoppinglist using this action. 
+Request contains Authenication token in header
+
+
+    + Headers
+
+            x-access-token: Token
+        
+
++ Response 201 (application/json)
+
+    + Headers
+
+            Location: /shoppinglists/id
+
+    + Body
+
+            {
+                "Message":"The list name has been deleted"
+            }
+
+## Add Items [/shoppinglists/id/items]            
+
+### Add an item [POST]
+
+You add an item using this action. It takes a JSON
+object containing an item name
+
++ Request (application/json)
+
+    + Headers
+
+            x-access-token: Token
+    + Body
+
+            {   "product":"nike",
+                "Quantity":5,
+                "Amountspent":400
+            }
+
++ Response 201 (application/json)
+
+    + Headers
+
+            Location: /shoppinglists/id/items
+
+    + Body
+
+            {
+                'Message': 'The product has been added',
+                
+            }
+
+## Items [/shoppinglists/id/items/item_id]            
+
+### edit an item [PUT]
+
+You edit an item using this action. It takes a JSON
+object containing an item name
+
++ Request (application/json)
+
+
+    + Headers
+
+            x-access-token: Token
+    + Body
+
+            {
+                "Quantity": "3",
+                "AmountSpent":"2300"
+            }
+
++ Response 201 (application/json)
+
+    + Headers
+
+            Location: /shoppinglists/id/items/item_id
+
+    + Body
+
+            {
+                'Message': 'The product has been updated'
+               
+            }
+
+### Delete an item [DELETE]
+
+You can delete an item using this action. It takes a JSON
+object containing an item name
+
+
+    + Headers
+
+            x-access-token: Token
+
+
++ Response 201 (application/json)
+
+    + Headers
+
+            Location: /shoppinglists/id/items/item_id
+
+    + Body
+
+            {
+                'message':'The product has been deleted'
+            }

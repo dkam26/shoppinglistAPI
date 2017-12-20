@@ -22,9 +22,18 @@ A user is required to include an e-mail address,user name, first name and Surnam
 
 The need for the continous tracking of one's expenditure on consumables
 
+## Tools
+    Database:Postgres
+    Text Editor:Vscode
+    API development environment:Postman
+    Microframework:Flask
 ## Tests
 
-The tests are to confirm the connection to the database,accounts creation,login session
+The tests are to confirm the connection to the database,accounts creation,login session,addition of lists and products
+
+To run the tests,use:
+
+nosetests --with-coverage --cover-package=my_app tests/
 
 ## Contributors
 

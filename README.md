@@ -24,12 +24,13 @@ The need for the continous tracking of one's expenditure on consumables
 
 ## Tools
 Tools used for development of this API are;
+- API development environment: [Postman](https://www.getpostman.com)
+- Editor: [Vs code](https://code.visualstudio.com)
 - Documentation : [Apiary](https://apiary.io/)
 - Database: [Postgresql](https://www.postgresql.org)
 - Microframework: [Flask](http://flask.pocoo.org/)
-- Editor: [Vs code](https://code.visualstudio.com)
 - Programming language: [Python 3.x.x](https://docs.python.org/3/)
-- API development environment: [Postman](https://www.getpostman.com)
+
 ## Tests
 
 The tests are to confirm the connection to the database,accounts creation,login session,addition of lists and products

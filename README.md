@@ -71,8 +71,6 @@ nosetests --with-coverage --cover-package=my_app tests/
     $ python manage.py db upgrade
     $ python run.py runserver
  ```
-### Base URL for the API
-URL: https://deployment-shopping-list-api.herokuapp.com/api
 
 ## End points
 ### Endpoints to create a user account and login into the application

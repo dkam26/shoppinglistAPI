@@ -1,8 +1,9 @@
-import os
+
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Api
-import psycopg2
+import psycopg2, os
+from my_app import views
 db_url='postgresql://postgres:masiko26@localhost/shoppinglist'
 app=Flask(__name__)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
@@ -13,5 +14,4 @@ else:
     app.config['SQLALCHEMY_DATABASE_URI'] = db_url
 db=SQLAlchemy(app)
 api = Api(app)
-from my_app import views
 db.create_all()

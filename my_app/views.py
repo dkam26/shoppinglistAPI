@@ -127,8 +127,8 @@ class GetUserShoppinglists(Resource):
     """API to return shoppinglists """
     @token_required
     def get(self, current_user):
-        each_page = request.args.get("each_page") 
-        page_number = request.args.get("page_number")
+        each_page = request.args.get("each_page",1,type=int) 
+        page_number = request.args.get("page_number",1,type=int)
         user = session['loggedUser']
         shoppinglist = Shoppinglists.query.filter_by(user=user).paginate(per_page=int(each_page), page=int(page_number)).items
         output = []

@@ -14,8 +14,8 @@ class ShoppingListApiTest(unittest.TestCase):
     def setUp(self):
         self.app=app
         self.client=app.test_client()
-        self.userInfo={"user":"dkam6","Surname":"Kamara","Email":"dkam26@ymail.com","Firstname":"deo","Password":"pass"}
-        self.user={"user":"dkam6","Password":"pass"}
+        self.userInfo={"user":"dkam6", "Surname":"Kamara", "Email":"dkam26@ymail.com", "Firstname":"deo", "Password":"pass"}
+        self.user={"user":"dkam6", "Password":"pass"}
         self.shoplist={"newlist":"shoes"}
         self.renamelist={"newName":"underwear"}
         self.shopllist=json.dumps(self.shoplist)

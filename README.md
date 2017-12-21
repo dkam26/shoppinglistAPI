@@ -76,30 +76,27 @@ nosetests --with-coverage --cover-package=my_app tests/
 ### Endpoints to create a user account and login into the application
 HTTP Method|End point | Public Access|Action
 -----------|----------|--------------|------
-POST | /auth/register | True | Create an account
-POST | /auth/login | True | Login a user
-POST | /auth/logout | False | Logout a user
-POST | /auth/reset-password | False | Reset a user password
-GET | /auth/users | True | View all registered user accounts
-GET | /auth/user/<user_id> | True | View details of a registered account
-DELETE | /auth/user/<user_id> | True | Delete user account
+POST | /auth/register/ | True | Create an account
+POST | /auth/login/ | True | Login a user
+POST | /auth/logout/ | False | Logout a user
+POST | /auth/RestPassword/ | False | Reset a user password
 
 ### Endpoints to create, update, view and delete a shopping list
 HTTP Method|End point | Public Access|Action
 -----------|----------|--------------|------
 POST | /shoppinglists/ | False | Create a shopping list
 GET | /shoppinglists/ | False | View all shopping lists
-GET | /shoppinglists/<list_id> | False | View details of a shopping list
-PUT | /shoppinglists/<list_id> | False | Updates a shopping list with a given id
-DELETE | /shoppinglists/<list_id> | False | Deletes a shopping list with a given id
+GET | /shoppinglist/<id> | False | View details of a shopping list
+PUT | /shoppinglists/<id> | False | Updates a shopping list with a given id
+DELETE | /shoppinglists/<id> | False | Deletes a shopping list with a given id
 
 ### Endpoints to create, update, view and delete a shopping list item
 HTTP Method|End point | Public Access|Action
 -----------|----------|--------------|------
-POST | /shoppinglists/<list_id>/items/ | False | Add an Item to a shopping list
-PUT | /shoppinglists/<list_id>/items/<item_id> | False | Update a shopping list item on a given list
-GET | /shoppinglists/<list_id>/items/ | False | View items in a particular shopping list
-DELETE | /shoppinglists/<list_id>/items/<item_id> | False | Delete an item from a given shopping list
+POST | /shoppinglists/<id>/items/ | False | Add an Item to a shopping list
+PUT | /shoppinglists/<id>/items/<item_id> | False | Update a shopping list item on a given list
+GET | /shoppinglists/<id>/items/ | False | View items in a particular shopping list
+DELETE | /shoppinglists/<id>/items/<item_id> | False | Delete an item from a given shopping list
 
 
 

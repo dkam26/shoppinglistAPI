@@ -139,8 +139,6 @@ class GetUserShoppinglists(Resource):
         else:
             return jsonify({'lists':output})
 
-        
-
 class GetUserShoppinglist(Resource):
     """API to return a given shoppinglist """
     @token_required

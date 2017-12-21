@@ -130,18 +130,23 @@ class GetUserShoppinglists(Resource):
         each_page = request.args.get("each_page",1,type=int) 
         page_number = request.args.get("page_number",1,type=int)
         user = session['loggedUser']
-        shoppinglist = Shoppinglists.query.filter_by(user=user).paginate(per_page=int(each_page), page=int(page_number)).items
+        shoppinglist = Shoppinglists.query.filter_by(user=user).paginate(per_page=int(each_page), page=int(page_number),error_out=False).items
         output = []
         for p in shoppinglist:
             output.append(p.shoppinglist_name)
-        return jsonify({'lists':output})
+        if len(output)==0:
+            return jsonify({'Message':'the specified page doesnt exist'})
+        else:
+            return jsonify({'lists':output})
+
+        
 
 class GetUserShoppinglist(Resource):
     """API to return a given shoppinglist """
     @token_required
     def get(self, current_user, id):
-        each_page = request.args.get("each_page") 
-        page_number = request.args.get("page_number")
+        each_page = request.args.get("each_page",1,type=int) 
+        page_number = request.args.get("page_number",1,type=int)
         Shoppinglist = Shoppinglists.query.filter_by(shoppinglist_name=id.lower()).first()
         output = []
         if Shoppinglist is not None:

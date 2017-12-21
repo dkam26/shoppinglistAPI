@@ -42,7 +42,7 @@ class Shoppinglists(db.Model):
         return '<Shoppinglists %d>'% self.id
 
 class Product(db.Model):
-    """Table for products under shoppinglists created by users"""
+    """Table for products under  shoppinglists created by users"""
     __tablename__ = "Product"
     id = db.Column(db.Integer,primary_key=True)
     shoppinglist_id=db.Column(db.Integer,db.ForeignKey("Shoppinglists.id"))

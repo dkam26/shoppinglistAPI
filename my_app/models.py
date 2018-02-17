@@ -24,10 +24,8 @@ class Shoppinglists(db.Model):
     """Table for shoppinglists created by users"""
     __tablename__="Shoppinglists"
     id= db.Column(db.Integer,primary_key=True)
-    user_id=db.Column(db.Integer,db.ForeignKey("User.id"))
     shoppinglist_name=db.Column(db.String(255), unique=True)
     user=db.Column(db.String(255))
-    products=db.relationship("Product",backref="Shoppinglist", lazy='dynamic', cascade="all, delete-orphan")
     def __init__(self,shoppinglist,user):
         self.shoppinglist_name=shoppinglist
         self.user=user
@@ -45,7 +43,6 @@ class Product(db.Model):
     """Table for products under  shoppinglists created by users"""
     __tablename__ = "Product"
     id = db.Column(db.Integer,primary_key=True)
-    shoppinglist_id=db.Column(db.Integer,db.ForeignKey("Shoppinglists.id"))
     shoppinglist = db.Column(db.String(255))
     product = db.Column(db.String(255))
     Quantity = db.Column(db.Integer)

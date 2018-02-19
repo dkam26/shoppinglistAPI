@@ -81,24 +81,43 @@ class Search(Resource):
     @token_required
     def get(self, current_user):
         searchedlist=request.args.get("q") 
-        shoppinglist = Shoppinglists.query.filter(Shoppinglists.shoppinglist_name.like('%'+searchedlist+'%'))
+        each_page = request.args.get("each_page",5,type=int) 
+        page_number = request.args.get("page_number",1,type=int)
+        shoppinglist = Shoppinglists.query.filter(Shoppinglists.shoppinglist_name.like('%'+searchedlist+'%')).paginate(per_page=int(each_page), page=int(page_number),error_out=False).items
         shoplist = []
+        items = []
         if shoppinglist:
+            nopages = Shoppinglists.query.filter(Shoppinglists.shoppinglist_name.like('%'+searchedlist+'%'))
+            for n in nopages:
+                items.append(n)
+            pages=len(items)
+            if pages ==0:
+                numberofpages=1
+            else:
+                numberofpages=pages//5
+            if (pages%5):
+                numberofpages=numberofpages+1
+            else:
+                pass
             for i in shoppinglist:
                 shoplist.append(i.shoppinglist_name)
-            return jsonify({'Message':shoplist})
+            return jsonify({'Message':shoplist,'pages':numberofpages})
         else:
-            return jsonify({'Message':'No list found','Success':'200'})
+            
+            return jsonify({'Message':'No list found','Success':'200','pages':numberofpages})
 
 class SearchProduct(Resource):
     """User to search for a product"""
     @token_required
     def get(self, current_user):
         searchedProduct=request.args.get("q") 
-        produit = Product.query.filter(Product.product.like('%'+searchedProduct.lower()+'%'))
-        
+        each_page = request.args.get("each_page",5,type=int) 
+        page_number = request.args.get("page_number",1,type=int)
+        produit = Product.query.filter(Product.product.like('%'+searchedProduct.lower()+'%')).paginate(per_page=int(each_page), page=int(page_number),error_out=False).items
+        items=[]
         item = {}
         produits = []
+        numberofpages=1
         if produit:
             for j in produit:
                 item={
@@ -108,7 +127,10 @@ class SearchProduct(Resource):
                     "shoppinglist_name":j.shoppinglist,
                 }
                 produits.append(item)
-        return jsonify({'Searched product':produits,'Success':'200'})
+        if(len(produits) >0):
+            print(len(produits)//5)
+
+        return jsonify({'Searched product':produits,'Success':'200','pages':numberofpages})
         
 class UserLogout(Resource):
     """User to logout"""
@@ -277,19 +299,23 @@ class UpdateShoppinglist(Resource):
         data = request.get_json()
         uantity = data.get('Quantity')
         AmountSpent = data.get('AmountSpent')
-        print(uantity)
+        print(type(uantity))
         UpdateItem = Product.query.filter_by(product=item_id.lower(),shoppinglist=id).first()
         if UpdateItem:
-                if (uantity >=0 and AmountSpent >=0):
+            if not uantity  and  not AmountSpent:
+                return jsonify({'Message':'Missing info',
+                        'Error':'404'})
+            else:
+                if int(uantity) >=0 and int(AmountSpent) >=0:
                     UpdateItem.Quantity = uantity
                     UpdateItem.AmountSpent = AmountSpent
                     UpdateItem.register(UpdateItem)
                     return jsonify({'Message':'The product has been updated','Success':'200'})
                 else:
                     return jsonify({'Message':'Quantity or Amountspent cant be negative values',
-                    'Error':'403'})
-       
-        return jsonify({'message':'The product doesnt exist',
+                        'Error':'403'})
+
+        return jsonify({'Message':'The product doesnt exist',
                         'Error':'404'})
 
 class DeleteItem(Resource):

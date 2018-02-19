@@ -10,7 +10,7 @@ CORS(app)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 app.config['SECRET_KEY']='Random key'
 if os.environ.get('DATABASE_URL'):
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URI']
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 else:
     app.config['SQLALCHEMY_DATABASE_URI'] = db_url
 db=SQLAlchemy(app)

@@ -86,6 +86,7 @@ class Search(Resource):
         shoppinglist = Shoppinglists.query.filter(Shoppinglists.shoppinglist_name.like('%'+searchedlist+'%')).paginate(per_page=int(each_page), page=int(page_number),error_out=False).items
         shoplist = []
         items = []
+        numberofpages=1
         if shoppinglist:
             nopages = Shoppinglists.query.filter(Shoppinglists.shoppinglist_name.like('%'+searchedlist+'%'))
             for n in nopages:

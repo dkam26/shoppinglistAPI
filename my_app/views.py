@@ -323,7 +323,6 @@ class DeleteItem(Resource):
     @token_required
     def delete(self, current_user, id, item_id):
         ItemToDelete = Product.query.filter_by(product=item_id.lower(),shoppinglist=id).first()
-        print(ItemToDelete.shoppinglist)
         if ItemToDelete:
             db.session.delete(ItemToDelete)
             db.session.commit()

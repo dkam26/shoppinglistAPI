@@ -6,7 +6,7 @@ class ShoppinglistItem(ShoppingListApiTest):
         """Test API can return a list items """
         product_to_add={'product':'nikes','Quantity':3,'Amountspent':5000}
         jsonproduct_to_add=json.dumps(product_to_add)
-        add_list=self.client.post('/shoppinglists/', 
+        add_list=self.client.post('/addshoppinglists/?user='+self.user['user'], 
                                     data=self.shopllist, 
                                     headers={
                                         'Content-Type':'application/json',
@@ -16,10 +16,10 @@ class ShoppinglistItem(ShoppingListApiTest):
                                         headers={
                                             'Content-Type':'application/json',
                                             'x-access-token':self.tok})
-        list_of_items=self.client.get('/shoppinglist/shoes/?each_page=1&page_number=1',
+        list_of_items=self.client.get('/shoppinglist/shoes?page_number=1',
                                         headers={
                                             'Content-Type':'application/json',
-                                            'x-access-token':self.tok})
+                                            'x-access-token':self.tok})                 
         self.assertIn("Products",str(list_of_items.data)) 
         self.assertEqual(list_of_items.status_code,200)
 

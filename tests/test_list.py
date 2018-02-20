@@ -32,8 +32,8 @@ class Shoppinglist(ShoppingListApiTest):
                                         headers={
                                             'Content-Type':'application/json',
                                             'x-access-token':self.tok})
-        self.assertIn("existing products of searched list",str(searchforlists.data))
-        self.assertIn("Searched product",str(searchforproducts.data))
+        self.assertIn("Success",str(searchforlists.data))
+        self.assertIn("Success",str(searchforproducts.data))
         self.assertEqual(searchforproducts.status_code,200)
         self.assertEqual(searchforlists.status_code,200) 
     
@@ -49,7 +49,7 @@ class Shoppinglist(ShoppingListApiTest):
                                             'Content-Type':'application/json',
                                             'x-access-token':self.tok})
         self.assertEqual(searchforlists.status_code,200) 
-        self.assertIn("shoes Shoppinglist still empty",str(searchforlists.data)) 
+        self.assertIn("No list found",str(searchforlists.data)) 
 
     def test_app_can_update_a_list(self):
         """Test API can update  a list """
@@ -63,8 +63,8 @@ class Shoppinglist(ShoppingListApiTest):
         self.assertEqual(list_update.status_code,200)
 
     def test_app_can_add_list(self):
-        """Test API can add  a product in a  list """
-        add_list=self.client.post('/shoppinglists/', 
+        """Test API can add  in a  list """
+        add_list=self.client.post('/addshoppinglists/?user='+self.user['user'], 
                                 data=self.shopllist, 
                                 headers={
                                     'Content-Type':'application/json',

@@ -256,7 +256,6 @@ class DeleteUserShoppinglist(Resource):
     def delete(self, current_user, id):
         session['loggedUser'] = request.args.get("user")
         Shoppinglist = Shoppinglists.query.filter_by(shoppinglist_name=id.lower(),user = session['loggedUser']).first()
-        print(Shoppinglist.shoppinglist_name)
         if Shoppinglist:
             db.session.delete(Shoppinglist)
             db.session.commit()

@@ -118,6 +118,7 @@ class SearchProduct(Resource):
         items=[]
         item = {}
         produits = []
+        pages=0
         numberofpages=1
         if produit:
             for j in produit:
@@ -128,9 +129,21 @@ class SearchProduct(Resource):
                     "shoppinglist_name":j.shoppinglist,
                 }
                 produits.append(item)
-        if(len(produits) >0):
-            print(len(produits)//5)
-
+        nopages = Product.query.filter(Product.product.like('%'+searchedProduct.lower()+'%'))
+        if nopages:
+            for i in nopages:
+                pages = pages+1
+        print(pages)
+        if pages==5:
+            numberofpages=5
+        if pages<5:
+            numberofpages=5
+        if pages>5:
+            if(pages%5 !=0):
+                numberofpages=(pages//5)+1
+            else:
+                numberofpages=(pages//5)
+        print(numberofpages)
         return jsonify({'Searched product':produits,'Success':'200','pages':numberofpages})
         
 class UserLogout(Resource):

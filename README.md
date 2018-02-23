@@ -2,6 +2,7 @@
 # ShoppinglistAPI
 [![Build Status](https://travis-ci.org/dkam26/shoppinglistAPI.png)](https://travis-ci.org/dkam26/shoppinglistAPI)
 [![Coverage Status](https://coveralls.io/repos/github/dkam26/shoppinglistAPI/badge.svg?branch=develop)](https://coveralls.io/github/dkam26/shoppinglistAPI?branch=develop)
+[![CircleCI](https://circleci.com/gh/dkam26/shoppinglistAPI.svg?style=svg)](https://circleci.com/gh/dkam26/shoppinglistAPI)
 =======
 # ShoppingList
 Shoppinglist is an app helps users keep track of their purchased goods.Users can add goods bought,update them or even delete them.

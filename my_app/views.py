@@ -50,7 +50,7 @@ class AddNewUser(Resource):
                         newUser=User(user.lower(), surname.lower(), firstname.lower(),email, password)
                         db.session.add(newUser)
                         db.session.commit()
-                        return jsonify({'message':'User created','Success':'200'})
+                        return jsonify({'message':'Us created','Success':'200'})
                     else:
                         return jsonify({'message':"User exists",'Error':'403'})
         return jsonify({'message':"Invalid email",'Error':'404'})

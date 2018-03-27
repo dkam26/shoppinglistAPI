@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Api
 import psycopg2, os
 from flask_cors import CORS
-db_url='postgresql://postgres:masiko26@localhost/shoppinglist'
+db_url='postgresql://kamaradeo:1234@localhost/shoppinglist'
 
 app=Flask(__name__)
 CORS(app)

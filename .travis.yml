@@ -13,7 +13,7 @@ install:
 
 before_script:
   - createuser kamaradeo --createdb
-  - psql kamaradeo -c 'CREATE DATABASE shoppinglist;' 
+  - psql  -c 'CREATE DATABASE shoppinglist;' -U kamaradeo
   
 
 #To run tests  

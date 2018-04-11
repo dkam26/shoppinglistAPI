@@ -13,7 +13,7 @@ install:
 
 before_script:
   - createuser kamaradeo --createdb
-  - createdb super_awesome_application -U patrick
+  - createdb shoppinglist -U kamaradeo
   
 
 #To run tests  

@@ -13,7 +13,7 @@ install:
 
 before_script:
   - createuser kamaradeo --createdb
-  - psql  -c 'CREATE DATABASE shoppinglist;' -U kamaradeo
+  - createdb super_awesome_application -U patrick
   
 
 #To run tests  

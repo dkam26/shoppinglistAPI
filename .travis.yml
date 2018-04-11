@@ -12,7 +12,8 @@ install:
   - pip install -r requirements.txt
 
 before_script:
-  - psql -c 'create database shoppinglist;' -U kamaradeo
+  - psql kamaradeo -c 'CREATE DATABASE shoppinglist;' 
+  
 
 #To run tests  
 script: 

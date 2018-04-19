@@ -6,7 +6,8 @@ pipeline {
         stage('build') {
             steps {
                 echo 'cloning github repository'
-                sh 'git clone https://github.com/dkam26/shoppinglistAPI.git/'
+                
+                git branch: 'develop', url: 'https://github.com/dkam26/shoppinglistAPI.git'
                 sh 'virtualenv venv'
                 sh 'ls'
                 sh '. venv/bin/activate'
@@ -27,3 +28,4 @@ pipeline {
     }
 
 }
+

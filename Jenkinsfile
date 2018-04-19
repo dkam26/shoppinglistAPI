@@ -11,7 +11,7 @@ pipeline {
                 sh 'virtualenv venv'
                 sh 'ls'
                 sh '. venv/bin/activate'
-                sh 'pip install -r shoppinglistAPI/requirements.txt'
+                sh 'pip install -r requirements.txt'
                 
             }
         }
@@ -21,7 +21,7 @@ pipeline {
                 echo 'Run tests'
                 sh 'ls'
                 
-                sh 'nosetests shoppinglistAPI/tests  --with-coverage --cover-package=shoppinglistAPI/my_app'
+                sh 'nosetests tests  --with-coverage --cover-package=my_app'
                 
             }
         }

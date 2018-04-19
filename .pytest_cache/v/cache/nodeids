@@ -1,0 +1,15 @@
+[
+  "tests/test_item.py::ShoppinglistItem::test_app_can_delete_an_item",
+  "tests/test_item.py::ShoppinglistItem::test_app_returns_shoppinglist_items",
+  "tests/test_list.py::Shoppinglist::test_app_can_add_list",
+  "tests/test_list.py::Shoppinglist::test_app_can_delete_list",
+  "tests/test_list.py::Shoppinglist::test_app_can_update_a_list",
+  "tests/test_list.py::Shoppinglist::test_if_app_can_search_for_existing_list_without_products",
+  "tests/test_list.py::Shoppinglist::test_if_app_can_search_for_existing_lists_with_products",
+  "tests/test_list.py::Shoppinglist::test_if_app_gets_shoppinglists",
+  "tests/test_user.py::ShoppingApiUserTest::test_LoginUser",
+  "tests/test_user.py::ShoppingApiUserTest::test_addnewuser",
+  "tests/test_user.py::ShoppingApiUserTest::test_app_can_logout_user",
+  "tests/test_user.py::ShoppingApiUserTest::test_app_can_reset_password",
+  "tests/test_user.py::ShoppingApiUserTest::test_if_app_denies_creation_of_users_with_the_same_info"
+]

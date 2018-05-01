@@ -1,31 +1,44 @@
-pipeline {
-    agent any
+// pipeline {
+//     agent any
     
     
-    stages {
-        stage('build') {
-            steps {
-                echo 'cloning github repository'
+//     stages {
+//         stage('build') {
+//             steps {
+//                 echo 'cloning github repository'
                 
-                git branch: 'develop', url: 'https://github.com/dkam26/shoppinglistAPI.git'
-                sh 'virtualenv venv'
-                sh 'ls'
-                sh '. venv/bin/activate'
-                sh 'pip install -r requirements.txt'
+//                 git branch: 'develop', url: 'https://github.com/dkam26/shoppinglistAPI.git'
+//                 sh 'virtualenv venv'
+//                 sh 'ls'
+//                 sh '. venv/bin/activate'
+//                 sh 'pip install -r requirements.txt'
                 
-            }
-        }
+//             }
+//         }
         
-        stage('Test'){
-            steps{
-                echo 'Run tests'
-                sh 'ls'
+//         stage('Test'){
+//             steps{
+//                 echo 'Run tests'
+//                 sh 'ls'
                 
-                sh 'nosetests tests  --with-coverage --cover-package=my_app'
+//                 sh 'nosetests tests  --with-coverage --cover-package=my_app'
                 
-            }
-        }
-    }
+//             }
+//         }
+//     }
 
+// }
+
+node{
+    git branch: 'develop', url: 'https://github.com/dkam26/shoppinglistAPI.git'
+    
+    sh 'virtualenv venv'
+    
+    sh 'ls'
+    
+    sh '. venv/bin/activate'
+    
+    sh 'pip install -r requirements.txt'
+    
+    sh 'nosetests tests  --with-coverage --cover-package=my_app'
 }
-

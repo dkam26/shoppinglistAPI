@@ -11,7 +11,7 @@ pipeline {
                 sh 'virtualenv venv'
                 sh 'ls'
                 sh '. venv/bin/activate'
-                sh 'sudo pip install -r requirements.txt'
+                sh ' pip install -r requirements.txt'
                 
             }
         }
